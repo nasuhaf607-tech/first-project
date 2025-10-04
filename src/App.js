@@ -40,11 +40,7 @@ function App() {
               <DriverProfileComplete />
             </ProtectedRoute>
           } />
-          <Route path="/enhanced-bookings" element={
-            <ProtectedRoute requireRole={['OKU User', 'Driver']}>
-              <EnhancedBookingSystem />
-            </ProtectedRoute>
-          } />
+          <Route path="/enhanced-bookings" element={<EnhancedBookingSystem />} />
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={
