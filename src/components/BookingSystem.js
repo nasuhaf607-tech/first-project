@@ -123,7 +123,24 @@ const BookingSystem = () => {
   if (user?.role === 'OKU User') {
     return (
       <div className="max-w-6xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Book Transport</h1>
+        {/* HEADER with LOGOUT BUTTON */}
+        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 mb-8 text-white">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold">Book Transport 🚐</h1>
+              <p className="text-green-100 mt-1">Schedule your rides with assigned drivers</p>
+            </div>
+            <button
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = '/';
+              }}
+              className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 shadow-lg"
+            >
+              🚪 LOGOUT
+            </button>
+          </div>
+        </div>
         
         {message && (
           <div className={`mb-4 p-4 rounded-md ${
