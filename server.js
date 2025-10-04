@@ -671,10 +671,16 @@ io.on('connection', (socket) => {
   });
 });
 
+// Serve React app for any non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
 // Start server
 const PORT = process.env.PORT || 8001;
 server.listen(PORT, () => {
   console.log(`OKU Transport Server running on port ${PORT}`);
+  console.log(`Frontend served from /build directory`);
   console.log(`Socket.IO enabled for real-time features`);
 });
 
