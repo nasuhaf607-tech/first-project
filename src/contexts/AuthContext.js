@@ -58,11 +58,19 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
       if (token) {
         try {
-          const response = await axios.get(`${API_BASE_URL}/profile`);
-          setUser(response.data.user);
+          // Try to get user from localStorage first
+          const savedUser = localStorage.getItem('user');
+          if (savedUser) {
+            setUser(JSON.parse(savedUser));
+          } else {
+            const response = await axios.get(`${API_BASE_URL}/profile`);
+            setUser(response.data.user);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+          }
         } catch (error) {
           console.error('Failed to load user:', error);
           localStorage.removeItem('token');
+          localStorage.removeItem('user');
           setToken(null);
         }
       }
