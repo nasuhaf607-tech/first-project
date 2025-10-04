@@ -466,7 +466,7 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
     }
     
     const [result] = await connection.execute(
-      `INSERT INTO bookings (
+      `INSERT INTO tbbook (
         oku_id, driver_id, booking_type, start_datetime, end_datetime,
         pickup_location, pickup_lat, pickup_lng, 
         dropoff_location, dropoff_lat, dropoff_lng,
