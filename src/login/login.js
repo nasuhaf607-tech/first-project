@@ -18,14 +18,31 @@ const Login = () => {
     setError('');
     
     try {
-      const result = await login(formData.email, formData.password);
+      // Direct API call
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+      });
       
-      if (result.success) {
+      const result = await response.json();
+      
+      if (response.ok) {
+        // Store token in localStorage
+        localStorage.setItem('token', result.token);
+        
+        // Redirect to dashboard
         navigate('/dashboard');
       } else {
-        setError(result.message);
+        setError(result.message || 'Login failed');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
