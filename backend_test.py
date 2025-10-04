@@ -281,10 +281,14 @@ class OKUTransportAPITester:
                 "Correctly rejected invalid credentials"
             )
         else:
+            try:
+                error_msg = response.json().get('message', 'Unknown error') if response else 'No response'
+            except:
+                error_msg = 'Invalid response format'
             return self.log_test(
                 "Invalid Login", 
                 False, 
-                f"Expected 401, got {response.status_code if response else 'No response'}"
+                f"Expected 401, got {response.status_code if response else 'No response'}: {error_msg}"
             )
 
     def test_protected_profile_route(self):
