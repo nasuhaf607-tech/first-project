@@ -19,7 +19,8 @@ const Login = () => {
     
     try {
       // Direct API call
-      const response = await fetch('/api/login', {
+      const API_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api` : 'http://localhost:8001/api';
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
