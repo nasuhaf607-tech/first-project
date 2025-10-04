@@ -69,9 +69,9 @@ class OKUTransportAPITester:
         
         response = self.make_request('GET', 'api/profile')
         if response and response.status_code == 401:
-            return self.log_test("Server Health Check", True, "Server is running and responding")
+            return self.log_test("Server Health Check", True, "Server is running and responding with correct auth error")
         else:
-            return self.log_test("Server Health Check", False, "Server not responding properly")
+            return self.log_test("Server Health Check", False, f"Expected 401, got {response.status_code if response else 'No response'}")
 
     def test_user_registration(self):
         """Test user registration functionality"""
