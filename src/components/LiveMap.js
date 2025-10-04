@@ -225,8 +225,8 @@ const LiveMap = () => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        
+      {/* Driver Controls */}
+      <div className="flex justify-end items-center mb-6">
         {user?.role === 'Driver' && (
           <div className="flex gap-3">
             {!isTracking ? (
