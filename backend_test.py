@@ -204,37 +204,56 @@ class OKUTransportAPITester:
             response = self.make_request('POST', 'api/login', test_credentials)
             
             if response and response.status_code == 200:
-                response_data = response.json()
-                
-                # Store tokens for different user types
-                if user["userType"] == "OKU User":
-                    self.token = response_data.get('token')
-                    self.user_data = response_data.get('user')
-                elif user["userType"] == "Driver":
-                    self.driver_token = response_data.get('token')
-                    self.driver_data = response_data.get('user')
-                elif user["userType"] == "Company Admin":
-                    self.admin_token = response_data.get('token')
-                    self.admin_data = response_data.get('user')
-                
-                success = self.log_test(
-                    f"Login {user['userType']}", 
-                    True, 
-                    f"Login successful for {user['userType']}: {response_data.get('user', {}).get('name', 'Unknown')}",
-                    response_data
-                )
-                login_results.append(success)
+                try:
+                    response_data = response.json()
+                    
+                    # Store tokens for different user types
+                    if user["userType"] == "OKU User":
+                        self.token = response_data.get('token')
+                        self.user_data = response_data.get('user')
+                    elif user["userType"] == "Driver":
+                        self.driver_token = response_data.get('token')
+                        self.driver_data = response_data.get('user')
+                    elif user["userType"] == "Company Admin":
+                        self.admin_token = response_data.get('token')
+                        self.admin_data = response_data.get('user')
+                    
+                    success = self.log_test(
+                        f"Login {user['userType']}", 
+                        True, 
+                        f"Login successful for {user['userType']}: {response_data.get('user', {}).get('name', 'Unknown')}",
+                        response_data
+                    )
+                    login_results.append(success)
+                except:
+                    success = self.log_test(
+                        f"Login {user['userType']}", 
+                        False, 
+                        f"Status: {response.status_code}, Error: Invalid JSON response"
+                    )
+                    login_results.append(success)
             elif response and response.status_code == 403 and user["userType"] == "Driver":
                 # Driver might be pending approval
-                success = self.log_test(
-                    f"Login {user['userType']}", 
-                    True, 
-                    "Driver login correctly blocked - pending approval",
-                    response.json()
-                )
+                try:
+                    error_data = response.json()
+                    success = self.log_test(
+                        f"Login {user['userType']}", 
+                        True, 
+                        f"Driver login correctly blocked: {error_data.get('message', 'pending approval')}",
+                        error_data
+                    )
+                except:
+                    success = self.log_test(
+                        f"Login {user['userType']}", 
+                        True, 
+                        "Driver login correctly blocked - pending approval"
+                    )
                 login_results.append(success)
             else:
-                error_msg = response.json().get('message', 'Login failed') if response else 'No response'
+                try:
+                    error_msg = response.json().get('message', 'Login failed') if response else 'No response'
+                except:
+                    error_msg = 'Invalid response format'
                 success = self.log_test(
                     f"Login {user['userType']}", 
                     False, 
