@@ -9,8 +9,9 @@ const Layout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
+    localStorage.clear();
     logout();
-    navigate('/');
+    window.location.href = '/';
   };
 
   const navigation = [
