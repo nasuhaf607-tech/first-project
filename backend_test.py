@@ -189,35 +189,60 @@ class OKUTransportAPITester:
         return registration_results
 
     def test_user_login(self):
-        """Test user login functionality"""
+        """Test user login functionality for different user types"""
         print("\n🔍 Testing User Login...")
         
-        # Test with predefined test user
-        test_credentials = {
-            "email": "test@example.com",
-            "password": "password123"
-        }
+        login_results = []
         
-        response = self.make_request('POST', 'api/login', test_credentials)
-        
-        if response and response.status_code == 200:
-            response_data = response.json()
-            self.token = response_data.get('token')
-            self.user_data = response_data.get('user')
+        # Test login for each registered user type
+        for user in self.test_users:
+            test_credentials = {
+                "email": user["email"],
+                "password": user["password"]
+            }
             
-            return self.log_test(
-                "User Login", 
-                True, 
-                f"Login successful for user: {self.user_data.get('name', 'Unknown')}",
-                response_data
-            )
-        else:
-            error_msg = response.json().get('message', 'Login failed') if response else 'No response'
-            return self.log_test(
-                "User Login", 
-                False, 
-                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
-            )
+            response = self.make_request('POST', 'api/login', test_credentials)
+            
+            if response and response.status_code == 200:
+                response_data = response.json()
+                
+                # Store tokens for different user types
+                if user["userType"] == "OKU User":
+                    self.token = response_data.get('token')
+                    self.user_data = response_data.get('user')
+                elif user["userType"] == "Driver":
+                    self.driver_token = response_data.get('token')
+                    self.driver_data = response_data.get('user')
+                elif user["userType"] == "Company Admin":
+                    self.admin_token = response_data.get('token')
+                    self.admin_data = response_data.get('user')
+                
+                success = self.log_test(
+                    f"Login {user['userType']}", 
+                    True, 
+                    f"Login successful for {user['userType']}: {response_data.get('user', {}).get('name', 'Unknown')}",
+                    response_data
+                )
+                login_results.append(success)
+            elif response and response.status_code == 403 and user["userType"] == "Driver":
+                # Driver might be pending approval
+                success = self.log_test(
+                    f"Login {user['userType']}", 
+                    True, 
+                    "Driver login correctly blocked - pending approval",
+                    response.json()
+                )
+                login_results.append(success)
+            else:
+                error_msg = response.json().get('message', 'Login failed') if response else 'No response'
+                success = self.log_test(
+                    f"Login {user['userType']}", 
+                    False, 
+                    f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+                )
+                login_results.append(success)
+        
+        return all(login_results)
 
     def test_invalid_login(self):
         """Test login with invalid credentials"""
