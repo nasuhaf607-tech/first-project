@@ -551,7 +551,115 @@ app.get('/api/users', authenticateToken, async (req, res) => {
   }
 });
 
-// Update driver status (approve/reject)
+// Update driver profile (with file upload)
+app.put('/api/driver/profile', authenticateToken, upload.fields([
+  { name: 'licensePhoto', maxCount: 1 },
+  { name: 'vehiclePhoto', maxCount: 1 },
+  { name: 'icPhoto', maxCount: 1 },
+  { name: 'selfiePhoto', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    if (req.user.role !== 'Driver') {
+      return res.status(403).json({ message: 'Only drivers can update driver profile' });
+    }
+
+    const {
+      licenseNumber, vehicleType, vehicleNumber, vehicleFeatures,
+      experience, languages, emergencyContact, emergencyPhone, address
+    } = req.body;
+
+    const connection = await getDbConnection();
+
+    // Parse vehicle features if it's a string
+    let parsedFeatures;
+    try {
+      parsedFeatures = typeof vehicleFeatures === 'string' 
+        ? JSON.parse(vehicleFeatures) 
+        : vehicleFeatures;
+    } catch (e) {
+      parsedFeatures = vehicleFeatures;
+    }
+
+    // Handle file uploads
+    const documents = {};
+    if (req.files) {
+      if (req.files.licensePhoto) documents.licensePhoto = req.files.licensePhoto[0].filename;
+      if (req.files.vehiclePhoto) documents.vehiclePhoto = req.files.vehiclePhoto[0].filename;
+      if (req.files.icPhoto) documents.icPhoto = req.files.icPhoto[0].filename;
+      if (req.files.selfiePhoto) documents.selfiePhoto = req.files.selfiePhoto[0].filename;
+    }
+
+    // Update driver profile and set status to pending for admin approval
+    const [result] = await connection.execute(
+      `UPDATE tbuser SET 
+         licenseNumber = ?, vehicleType = ?, vehicleNumber = ?, vehicleFeatures = ?,
+         experience = ?, languages = ?, emergencyContact = ?, emergencyPhone = ?, 
+         address = ?, licensePhoto = ?, vehiclePhoto = ?, icPhoto = ?, selfiePhoto = ?,
+         status = 'pending', updatedAt = NOW()
+       WHERE id = ? AND userType = 'Driver'`,
+      [
+        licenseNumber, vehicleType, vehicleNumber, JSON.stringify(parsedFeatures),
+        experience, languages, emergencyContact, emergencyPhone, address,
+        documents.licensePhoto || null, documents.vehiclePhoto || null,
+        documents.icPhoto || null, documents.selfiePhoto || null,
+        req.user.id
+      ]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Driver not found' });
+    }
+
+    res.json({ 
+      message: 'Profile updated successfully! Waiting for admin approval to start receiving bookings.',
+      status: 'pending'
+    });
+    await connection.end();
+  } catch (error) {
+    console.error('Driver profile update error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get driver profile completion status
+app.get('/api/driver/profile/status', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'Driver') {
+      return res.status(403).json({ message: 'Only drivers can check profile status' });
+    }
+
+    const connection = await getDbConnection();
+    const [rows] = await connection.execute(
+      `SELECT licenseNumber, vehicleType, vehicleNumber, status, 
+              licensePhoto, vehiclePhoto, icPhoto, selfiePhoto
+       FROM tbuser WHERE id = ? AND userType = 'Driver'`,
+      [req.user.id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Driver not found' });
+    }
+
+    const driver = rows[0];
+    const isProfileComplete = driver.licenseNumber && driver.vehicleType && 
+                             driver.vehicleNumber && driver.licensePhoto &&
+                             driver.vehiclePhoto && driver.icPhoto && driver.selfiePhoto;
+
+    res.json({
+      isComplete: isProfileComplete,
+      status: driver.status,
+      needsApproval: driver.status === 'pending',
+      canAcceptBookings: driver.status === 'approved' && isProfileComplete
+    });
+
+    await connection.end();
+  } catch (error) {
+    console.error('Driver profile status error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Update driver status (approve/reject) - ADMIN ONLY
 app.put('/api/drivers/:id/status', authenticateToken, async (req, res) => {
   try {
     if (!['Company Admin', 'JKM Officer'].includes(req.user.role)) {
