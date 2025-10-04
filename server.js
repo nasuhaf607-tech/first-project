@@ -452,7 +452,7 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
     
     // Check for booking conflicts
     const [conflicts] = await connection.execute(
-      `SELECT id FROM bookings 
+      `SELECT id FROM tbbook 
        WHERE driver_id = ? 
          AND status IN ('pending', 'approved', 'in_progress')
          AND NOT (? <= start_datetime OR ? >= end_datetime)`,
