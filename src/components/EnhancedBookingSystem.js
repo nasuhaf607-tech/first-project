@@ -467,7 +467,7 @@ const EnhancedBookingSystem = () => {
                                   <p className="text-sm font-medium text-gray-700 mb-1">♿ Accessibility Features:</p>
                                   <div className="flex flex-wrap gap-1">
                                     {JSON.parse(assignment.vehicleFeatures || '[]').map((feature, idx) => (
-                                      <span key={idx} className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                                      <span key={idx} className="bg-green-200 text-green-900 text-xs px-2 py-1 rounded-full font-medium">
                                         {feature}
                                       </span>
                                     ))}
