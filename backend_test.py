@@ -51,15 +51,16 @@ class OKUTransportAPITester:
 
         try:
             if method == 'GET':
-                response = requests.get(url, headers=default_headers, timeout=10)
+                response = requests.get(url, headers=default_headers, timeout=5)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=default_headers, timeout=10)
+                response = requests.post(url, json=data, headers=default_headers, timeout=5)
             elif method == 'PUT':
-                response = requests.put(url, json=data, headers=default_headers, timeout=10)
+                response = requests.put(url, json=data, headers=default_headers, timeout=5)
             
+            print(f"Request: {method} {url} -> Status: {response.status_code}")
             return response
         except requests.exceptions.RequestException as e:
-            print(f"Request error: {str(e)}")
+            print(f"Request error for {method} {url}: {str(e)}")
             return None
 
     def test_server_health(self):
