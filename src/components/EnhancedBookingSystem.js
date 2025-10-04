@@ -315,6 +315,57 @@ const EnhancedBookingSystem = () => {
             </div>
           )}
 
+          {/* Booking Type Selection Cards */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all">
+              <div className="text-center">
+                <div className="text-5xl mb-4">🚐</div>
+                <h3 className="text-2xl font-bold mb-2">One-Time Booking</h3>
+                <p className="text-blue-100 mb-4">Book a single ride for specific dates and times</p>
+                <ul className="text-sm text-blue-100 space-y-1 text-left max-w-xs mx-auto">
+                  <li>• Medical appointments</li>
+                  <li>• Shopping trips</li>
+                  <li>• Social visits</li>
+                  <li>• Emergency transport</li>
+                </ul>
+                <button 
+                  onClick={() => setBookingForm({...bookingForm, booking_type: 'daily'})}
+                  className={`mt-6 px-8 py-3 rounded-lg font-semibold transition-colors ${
+                    bookingForm.booking_type === 'daily' 
+                      ? 'bg-white text-blue-600 shadow-md' 
+                      : 'bg-blue-400 text-white hover:bg-blue-300'
+                  }`}
+                >
+                  Select One-Time
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all">
+              <div className="text-center">
+                <div className="text-5xl mb-4">📅</div>
+                <h3 className="text-2xl font-bold mb-2">Monthly Service</h3>
+                <p className="text-green-100 mb-4">Regular monthly transport service</p>
+                <ul className="text-sm text-green-100 space-y-1 text-left max-w-xs mx-auto">
+                  <li>• Daily work commute</li>
+                  <li>• Regular medical visits</li>
+                  <li>• School transport</li>
+                  <li>• Ongoing therapy sessions</li>
+                </ul>
+                <button 
+                  onClick={() => setBookingForm({...bookingForm, booking_type: 'monthly'})}
+                  className={`mt-6 px-8 py-3 rounded-lg font-semibold transition-colors ${
+                    bookingForm.booking_type === 'monthly' 
+                      ? 'bg-white text-green-600 shadow-md' 
+                      : 'bg-green-400 text-white hover:bg-green-300'
+                  }`}
+                >
+                  Select Monthly
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Booking Form */}
             <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
