@@ -54,25 +54,26 @@ const Layout = ({ children }) => {
               ))}
             </div>
 
-            {/* User Menu */}
+            {/* User Menu with PROMINENT LOGOUT */}
             <div className="hidden md:flex items-center space-x-4">
               <div className="flex items-center text-sm text-gray-600">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2">
-                  <span className="text-blue-600 font-semibold">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-blue-600 font-bold text-lg">
                     {user?.name?.charAt(0)?.toUpperCase()}
                   </span>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{user?.name}</p>
-                  <p className="text-xs text-gray-500">{user?.role}</p>
+                  <p className="font-medium text-gray-900 text-base">{user?.name}</p>
+                  <p className="text-sm text-blue-600 font-medium">{user?.role}</p>
                 </div>
               </div>
               
+              {/* PROMINENT LOGOUT BUTTON */}
               <button
                 onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
+                className="bg-red-600 text-white px-6 py-3 rounded-lg text-base font-bold hover:bg-red-700 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                Logout
+                🚪 LOGOUT
               </button>
             </div>
 
