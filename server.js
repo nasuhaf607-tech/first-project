@@ -490,6 +490,80 @@ app.put('/api/bookings/:id/status', authenticateToken, async (req, res) => {
   }
 });
 
+// ===== USER MANAGEMENT ROUTES =====
+
+// Get users by type and status (for admin)
+app.get('/api/users', authenticateToken, async (req, res) => {
+  try {
+    if (!['Company Admin', 'JKM Officer'].includes(req.user.role)) {
+      return res.status(403).json({ message: 'Insufficient permissions' });
+    }
+    
+    const { type, status } = req.query;
+    const connection = await getDbConnection();
+    
+    let query = 'SELECT * FROM tbuser WHERE 1=1';
+    const params = [];
+    
+    if (type === 'oku') {
+      query += ' AND userType = ?';
+      params.push('OKU User');
+    } else if (type === 'driver') {
+      query += ' AND userType = ?';
+      params.push('Driver');
+    }
+    
+    if (status) {
+      query += ' AND status = ?';
+      params.push(status);
+    }
+    
+    query += ' ORDER BY createdAt DESC';
+    
+    const [rows] = await connection.execute(query, params);
+    
+    // Remove password from results
+    const users = rows.map(user => {
+      delete user.password;
+      return user;
+    });
+    
+    res.json({ users });
+    await connection.end();
+  } catch (error) {
+    console.error('Users fetch error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Update driver status (approve/reject)
+app.put('/api/drivers/:id/status', authenticateToken, async (req, res) => {
+  try {
+    if (!['Company Admin', 'JKM Officer'].includes(req.user.role)) {
+      return res.status(403).json({ message: 'Insufficient permissions' });
+    }
+    
+    const { status } = req.body;
+    const driverId = req.params.id;
+    const connection = await getDbConnection();
+    
+    const [result] = await connection.execute(
+      'UPDATE tbuser SET status = ? WHERE id = ? AND userType = "Driver"',
+      [status, driverId]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Driver not found' });
+    }
+    
+    res.json({ message: `Driver ${status} successfully` });
+    await connection.end();
+  } catch (error) {
+    console.error('Driver status update error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // ===== GPS TRACKING ROUTES =====
 
 // Update GPS location
@@ -507,15 +581,25 @@ app.post('/api/gps/update', authenticateToken, async (req, res) => {
       [req.user.id, lat, lng, speed, heading, accuracy, booking_id]
     );
     
-    // Emit real-time location to connected OKU users
+    // Get driver details for real-time update
+    const [driverRows] = await connection.execute(
+      'SELECT name, vehicleType, vehicleNumber FROM tbuser WHERE id = ?',
+      [req.user.id]
+    );
+    
+    // Emit real-time location to connected users
     const locationData = {
       driver_id: req.user.id,
       lat,
       lng,
       speed,
       heading,
+      accuracy,
       timestamp: new Date(),
-      booking_id
+      booking_id,
+      driver_name: driverRows[0]?.name,
+      vehicleType: driverRows[0]?.vehicleType,
+      vehicleNumber: driverRows[0]?.vehicleNumber
     };
     
     io.emit('gps_update', locationData);
