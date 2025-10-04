@@ -18,6 +18,8 @@ const Login = () => {
     setError('');
     
     try {
+      console.log('Attempting login with:', formData.email);
+      
       // Direct API call
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -30,20 +32,26 @@ const Login = () => {
         }),
       });
       
+      console.log('Login response status:', response.status);
       const result = await response.json();
+      console.log('Login response data:', result);
       
       if (response.ok) {
         // Store token in localStorage
         localStorage.setItem('token', result.token);
+        localStorage.setItem('user', JSON.stringify(result.user));
         
-        // Redirect to dashboard
-        navigate('/dashboard');
+        console.log('Login successful, redirecting to dashboard...');
+        
+        // Force redirect to dashboard
+        window.location.href = '/dashboard';
       } else {
+        console.error('Login failed:', result.message);
         setError(result.message || 'Login failed');
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('An unexpected error occurred');
+      setError('Network error: ' + err.message);
     } finally {
       setLoading(false);
     }
