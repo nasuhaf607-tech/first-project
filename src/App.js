@@ -20,6 +20,7 @@ function App() {
           <Route path="/" element={<OKUTransport />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/test" element={<TestRegistration />} />
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={
