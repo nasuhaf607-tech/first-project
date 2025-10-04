@@ -333,7 +333,7 @@ const EnhancedBookingSystem = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">Book Transport 🚐</h1>
-              <p className="text-green-100 mt-1">Schedule your rides with assigned drivers</p>
+              <p className="text-white font-medium mt-1">Schedule your rides with assigned drivers</p>
             </div>
             <button
               onClick={logout}
