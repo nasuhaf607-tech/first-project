@@ -508,10 +508,10 @@ app.put('/api/bookings/:id/status', authenticateToken, async (req, res) => {
     let query, params;
     
     if (req.user.role === 'Driver') {
-      query = 'UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ? AND driver_id = ?';
+      query = 'UPDATE tbbook SET status = ?, updated_at = NOW() WHERE id = ? AND driver_id = ?';
       params = [status, bookingId, req.user.id];
     } else if (['Company Admin', 'JKM Officer'].includes(req.user.role)) {
-      query = 'UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?';
+      query = 'UPDATE tbbook SET status = ?, updated_at = NOW() WHERE id = ?';
       params = [status, bookingId];
     } else {
       return res.status(403).json({ message: 'Insufficient permissions' });
