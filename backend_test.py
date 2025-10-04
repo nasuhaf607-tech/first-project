@@ -69,6 +69,47 @@ class OKUTransportAPITester:
             print(f"Request error for {method} {url}: {str(e)}")
             return None
 
+    def test_database_connection(self):
+        """Test MySQL database connection"""
+        print("\n🔍 Testing Database Connection...")
+        
+        try:
+            # Test database connection directly
+            connection = mysql.connector.connect(
+                host='localhost',
+                user='root',
+                password='password123',
+                database='dbuser'
+            )
+            
+            cursor = connection.cursor()
+            cursor.execute("SELECT 1")
+            result = cursor.fetchone()
+            
+            if result and result[0] == 1:
+                # Test if required tables exist
+                cursor.execute("SHOW TABLES")
+                tables = [table[0] for table in cursor.fetchall()]
+                required_tables = ['tbuser', 'tbbook', 'assignments', 'gps_tracking', 'tbaccessibilities']
+                
+                missing_tables = [table for table in required_tables if table not in tables]
+                
+                if missing_tables:
+                    return self.log_test("Database Connection", False, f"Missing tables: {missing_tables}")
+                else:
+                    return self.log_test("Database Connection", True, "Database connected and all required tables exist")
+            else:
+                return self.log_test("Database Connection", False, "Database query failed")
+                
+        except mysql.connector.Error as e:
+            return self.log_test("Database Connection", False, f"Database connection failed: {str(e)}")
+        except Exception as e:
+            return self.log_test("Database Connection", False, f"Unexpected error: {str(e)}")
+        finally:
+            if 'connection' in locals() and connection.is_connected():
+                cursor.close()
+                connection.close()
+
     def test_server_health(self):
         """Test if server is running and responding"""
         print("\n🔍 Testing Server Health...")
