@@ -731,10 +731,14 @@ class OKUTransportAPITester:
                 "Invalid token correctly rejected"
             )
         else:
+            try:
+                error_msg = response.json().get('message', 'Unknown error') if response else 'No response'
+            except:
+                error_msg = 'Invalid response format'
             return self.log_test(
                 "JWT Token Validation", 
                 False, 
-                f"Expected 403 for invalid token, got {response.status_code if response else 'No response'}"
+                f"Expected 403 for invalid token, got {response.status_code if response else 'No response'}: {error_msg}"
             )
 
     def run_all_tests(self):
