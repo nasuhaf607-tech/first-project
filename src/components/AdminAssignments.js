@@ -116,7 +116,7 @@ const AdminAssignments = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Admin Dashboard 🏛️</h1>
-            <p className="text-purple-100 mt-1">Manage drivers, assignments and system operations</p>
+            <p className="text-white font-medium mt-1">Manage drivers, assignments and system operations</p>
           </div>
           <button
             onClick={() => {
