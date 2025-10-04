@@ -24,6 +24,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/test" element={<TestRegistration />} />
           <Route path="/authtest" element={<TestAuth />} />
+          <Route path="/simplelogin" element={<SimpleLogin />} />
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={
