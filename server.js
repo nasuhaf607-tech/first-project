@@ -693,6 +693,12 @@ app.get('/map', (req, res) => {
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+app.get('/authtest', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // Start server
 const PORT = process.env.PORT || 8001;
