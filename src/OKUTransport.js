@@ -14,12 +14,42 @@ const OKUTransport = () => {
 
       {/* Navbar */}
       <nav className="flex justify-between items-center bg-white shadow-md px-6 py-4">
-        <h1 className="text-2xl font-bold text-blue-800">OKUTransport</h1>
+        <h1 className="text-2xl font-bold text-blue-800">🚐 OKUTransport</h1>
         <div className="hidden md:flex space-x-6">
-          {/* Import Login button here */}
-          <Login />
-          <Register />
+          {user ? (
+            <Link
+              to="/dashboard"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-blue-800 hover:text-blue-600 font-medium px-4 py-2 rounded-md transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
+        
+        {/* Mobile Menu Button */}
+        <button 
+          className="md:hidden p-2"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </nav>
 
       {/* Mobile Menu */}
