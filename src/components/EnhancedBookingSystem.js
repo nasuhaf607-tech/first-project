@@ -641,14 +641,23 @@ const EnhancedBookingSystem = () => {
                 </div>
               )}
 
-              {/* Recent Bookings */}
+              {/* Booking History */}
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-lg font-semibold mb-4">📋 My Recent Bookings</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold">📋 Booking History</h2>
+                  <button 
+                    onClick={() => setShowFullHistory(!showFullHistory)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    {showFullHistory ? 'Show Less' : 'View All'}
+                  </button>
+                </div>
+                
                 {bookings.length === 0 ? (
                   <p className="text-gray-500 text-sm">No bookings yet</p>
                 ) : (
                   <div className="space-y-3">
-                    {bookings.slice(0, 3).map(booking => (
+                    {(showFullHistory ? bookings : bookings.slice(0, 3)).map(booking => (
                       <div key={booking.id} className="border border-gray-200 rounded-lg p-3">
                         <div className="flex justify-between items-start mb-2">
                           <div>
@@ -660,11 +669,44 @@ const EnhancedBookingSystem = () => {
                           </span>
                         </div>
                         <div className="text-xs text-gray-600">
-                          <p>{new Date(booking.start_datetime).toLocaleString()}</p>
-                          <p className="truncate">{booking.pickup_location} → {booking.dropoff_location}</p>
+                          <p><strong>Date:</strong> {new Date(booking.start_datetime).toLocaleDateString()}</p>
+                          <p><strong>Time:</strong> {new Date(booking.start_datetime).toLocaleTimeString()}</p>
+                          <p className="truncate"><strong>Route:</strong> {booking.pickup_location} → {booking.dropoff_location}</p>
+                          {booking.purpose && <p><strong>Purpose:</strong> {booking.purpose}</p>}
+                          <p><strong>Type:</strong> {booking.booking_type}</p>
+                        </div>
+                        
+                        {/* Export Booking Option */}
+                        <div className="mt-2 pt-2 border-t border-gray-100 flex gap-2">
+                          <button 
+                            onClick={() => exportBookingHistory([booking])}
+                            className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                          >
+                            📄 Export
+                          </button>
+                          {booking.status === 'completed' && (
+                            <button 
+                              onClick={() => rateBooking(booking)}
+                              className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200"
+                            >
+                              ⭐ Rate Trip
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
+                    
+                    {/* Export All Bookings */}
+                    {bookings.length > 0 && (
+                      <div className="pt-3 border-t border-gray-200">
+                        <button 
+                          onClick={() => exportBookingHistory(bookings)}
+                          className="w-full bg-blue-600 text-white text-sm py-2 px-4 rounded hover:bg-blue-700"
+                        >
+                          📊 Export All History
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
