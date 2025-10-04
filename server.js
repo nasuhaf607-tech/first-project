@@ -341,7 +341,7 @@ app.get('/api/driver/:driverId/schedule', authenticateToken, async (req, res) =>
     let query = `
       SELECT b.id, b.start_datetime, b.end_datetime, b.status, b.pickup_location, b.dropoff_location,
              u.name as oku_name
-      FROM bookings b
+      FROM tbbook b
       JOIN tbuser u ON b.oku_id = u.id
       WHERE b.driver_id = ? AND b.status IN ('pending', 'approved', 'in_progress')
     `;
