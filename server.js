@@ -20,12 +20,15 @@ const io = socketIo(server, {
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept']
 }));
 app.use(express.json());
+
+// Serve React build files
+app.use(express.static('build'));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
