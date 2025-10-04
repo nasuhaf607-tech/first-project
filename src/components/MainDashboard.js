@@ -93,9 +93,9 @@ const MainDashboard = () => {
   const getDashboardCards = () => {
     if (user?.role === 'OKU User') {
       return [
-        { title: 'Total Bookings', value: stats.totalBookings, icon: '📅', color: 'bg-blue-500', link: '/bookings' },
-        { title: 'Pending Requests', value: stats.pendingBookings, icon: '⏳', color: 'bg-yellow-500', link: '/bookings' },
-        { title: 'Completed Trips', value: stats.completedBookings, icon: '✅', color: 'bg-green-500', link: '/bookings' },
+        { title: 'Total Bookings', value: stats.totalBookings, icon: '📅', color: 'bg-blue-500', link: '/enhanced-bookings' },
+        { title: 'Pending Requests', value: stats.pendingBookings, icon: '⏳', color: 'bg-yellow-500', link: '/enhanced-bookings' },
+        { title: 'Completed Trips', value: stats.completedBookings, icon: '✅', color: 'bg-green-500', link: '/enhanced-bookings' },
         { title: 'Live Tracking', value: 'View Map', icon: '🗺️', color: 'bg-purple-500', link: '/map' }
       ];
     }
