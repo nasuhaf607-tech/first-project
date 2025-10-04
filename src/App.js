@@ -30,9 +30,21 @@ function App() {
           <Route path="/authtest" element={<TestAuth />} />
           <Route path="/simplelogin" element={<SimpleLogin />} />
           <Route path="/simpledash" element={<SimpleDashboard />} />
-          <Route path="/driver-dashboard" element={<DriverDashboard />} />
-          <Route path="/driver-profile" element={<DriverProfileComplete />} />
-          <Route path="/enhanced-bookings" element={<EnhancedBookingSystem />} />
+          <Route path="/driver-dashboard" element={
+            <ProtectedRoute requireRole={['Driver']}>
+              <DriverDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/driver-profile" element={
+            <ProtectedRoute requireRole={['Driver']}>
+              <DriverProfileComplete />
+            </ProtectedRoute>
+          } />
+          <Route path="/enhanced-bookings" element={
+            <ProtectedRoute requireRole={['OKU User', 'Driver']}>
+              <EnhancedBookingSystem />
+            </ProtectedRoute>
+          } />
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={
