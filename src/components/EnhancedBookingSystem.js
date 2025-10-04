@@ -768,7 +768,7 @@ const EnhancedBookingSystem = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">🚗 Driver Dashboard</h1>
-              <p className="text-blue-100 mt-1">Manage your ride requests from OKU passengers</p>
+              <p className="text-white font-medium mt-1">Manage your ride requests from OKU passengers</p>
             </div>
             <button
               onClick={logout}
