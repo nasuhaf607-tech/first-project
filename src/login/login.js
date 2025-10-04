@@ -1,187 +1,179 @@
-// src/components/Login.js
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Alert } from "@mui/material";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-export default function Login() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("OKU User");
-  const [error, setError] = useState("");
+const Login = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
-
-  // Auto-hide error after 3 seconds (only clears error, not inputs)
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
+    setLoading(true);
+    setError('');
+    
     try {
-      const response = await fetch("http://localhost/first-project/backend/login.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (data.message !== "Login successful") {
-        setError(data.message);
-
-        // 🔹 Reset inputs immediately
-        setEmail("");
-        setPassword("");
-        return;
-      }
-
-      // ✅ Save user profile in localStorage
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: data.name,
-          email: data.email,
-          role: role,
-        })
-      );
-
-      alert(`Logged in as ${role}: ${data.name}`);
-      setIsOpen(false);
-
-      // ✅ Redirect based on role
-      if (role === "OKU User") {
-        navigate("/PassengerDashboard");
-      } else if (role === "Driver") {
-        navigate("/DriverDashboard");
-      } else if (role === "Company Admin") {
-        navigate("/admin");
-      } else if (role === "JKM Officer") {
-        navigate("/OfficerDashboard");
+      const result = await login(formData.email, formData.password);
+      
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.message);
       }
     } catch (err) {
-      console.error(err);
-      setError("Server error. Please try again.");
-
-      // 🔹 Reset inputs immediately
-      setEmail("");
-      setPassword("");
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   return (
-    <>
-      {/* Tailwind Keyframes for fade-in */}
-      <style>
-        {`
-          @keyframes fadein {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-        `}
-      </style>
-
-      {/* Login Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-blue-600 text-white font-medium px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-all duration-300 hover:-translate-y-0.5"
-      >
-        Login
-      </button>
-
-      {/* Login Modal */}
-      <div
-        className={`fixed inset-0 flex items-center justify-center z-50
-          bg-black/30 backdrop-blur-sm
-          transition-opacity duration-500
-          ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-      >
-        <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6">
-          {/* Close button */}
-          <button
-            onClick={() => setIsOpen(false)}
-            className="absolute top-3 right-3 text-2xl font-bold text-gray-500 hover:text-gray-700"
-          >
-            ×
-          </button>
-
-          {/* Error popup */}
-          {error && (
-            <Alert
-              severity="error"
-              className="mb-4"
-              style={{ animation: "fadein 0.5s ease-out" }}
-            >
-              {error}
-            </Alert>
-          )}
-
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-blue-800">🚐 OKUTransport</h1>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email */}
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Email
-              </label>
-              <input
-                type="text"
-                placeholder="email@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white"
-                required
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white"
-                required
-              />
-            </div>
-
-            {/* Role Dropdown */}
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Login as:
-              </label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white"
-              >
-                <option>OKU User</option>
-                <option>Driver</option>
-                <option>Company Admin</option>
-                <option>JKM Officer</option>
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg"
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Or{' '}
+            <Link
+              to="/register"
+              className="font-medium text-blue-600 hover:text-blue-500"
             >
-              Sign in
-            </button>
-          </form>
+              create a new account
+            </Link>
+          </p>
         </div>
       </div>
-    </>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                <div className="text-sm text-red-700">{error}</div>
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email address
+              </label>
+              <div className="mt-1">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter your email"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <div className="mt-1">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Quick Login (Demo)</span>
+              </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ email: 'oku@example.com', password: 'password123' });
+                }}
+                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <span>🧑‍🦽</span>
+                <span className="ml-2">OKU User</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ email: 'driver@example.com', password: 'password123' });
+                }}
+                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <span>🚗</span>
+                <span className="ml-2">Driver</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 text-center">
+        <Link
+          to="/"
+          className="text-blue-600 hover:text-blue-500 font-medium"
+        >
+          ← Back to homepage
+        </Link>
+      </div>
+    </div>
   );
-}
+};
+
+export default Login;
