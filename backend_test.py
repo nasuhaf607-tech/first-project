@@ -1,23 +1,29 @@
 #!/usr/bin/env python3
 """
 OKU Transport System - Backend API Testing
-Tests authentication flow, user registration, login, and protected routes
+Comprehensive testing for database connection, authentication, bookings, assignments, GPS tracking
 """
 
 import requests
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
+import mysql.connector
 
 class OKUTransportAPITester:
     def __init__(self, base_url="http://localhost:8001"):
         self.base_url = base_url
         self.token = None
         self.user_data = None
+        self.driver_token = None
+        self.driver_data = None
+        self.admin_token = None
+        self.admin_data = None
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        self.test_users = []  # Store created test users
 
     def log_test(self, name, success, message="", response_data=None):
         """Log test results"""
