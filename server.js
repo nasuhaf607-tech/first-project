@@ -671,8 +671,17 @@ io.on('connection', (socket) => {
   });
 });
 
-// Serve React app for any non-API routes
-app.get('/*', (req, res) => {
+// Serve React app for specific routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
