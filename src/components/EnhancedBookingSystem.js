@@ -279,6 +279,47 @@ const EnhancedBookingSystem = () => {
     });
   };
 
+  const exportBookingHistory = (bookingsToExport) => {
+    // Convert booking data to CSV format
+    const headers = ['Date', 'Time', 'Driver', 'Vehicle', 'Pickup', 'Dropoff', 'Purpose', 'Status', 'Type'];
+    const csvData = [
+      headers.join(','),
+      ...bookingsToExport.map(booking => [
+        new Date(booking.start_datetime).toLocaleDateString(),
+        new Date(booking.start_datetime).toLocaleTimeString(),
+        booking.driver_name || '',
+        booking.vehicleType || '',
+        booking.pickup_location || '',
+        booking.dropoff_location || '',
+        booking.purpose || '',
+        booking.status,
+        booking.booking_type
+      ].map(field => `"${field}"`).join(','))
+    ].join('\n');
+
+    // Download CSV file
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `booking_history_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    setMessage('✅ Booking history exported successfully!');
+  };
+
+  const rateBooking = (booking) => {
+    // This would open a rating modal in a full implementation
+    const rating = prompt(`Rate your trip with ${booking.driver_name} (1-5 stars):`);
+    if (rating && rating >= 1 && rating <= 5) {
+      // In a full implementation, this would send the rating to the backend
+      setMessage(`✅ Thank you for rating your trip ${rating}/5 stars!`);
+    }
+  };
+
   const logout = () => {
     localStorage.clear();
     window.location.href = '/';
