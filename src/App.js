@@ -7,6 +7,7 @@ import Register from "./login/Register";
 import TestRegistration from "./TestRegistration";
 import TestAuth from "./TestAuth";
 import SimpleLogin from "./SimpleLogin";
+import SimpleDashboard from "./SimpleDashboard";
 import MainDashboard from "./components/MainDashboard";
 import BookingSystem from "./components/BookingSystem";
 import LiveMap from "./components/LiveMap";
