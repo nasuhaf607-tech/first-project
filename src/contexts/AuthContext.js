@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   // Initialize socket connection
   useEffect(() => {
     if (user && token) {
-      const newSocket = io('http://localhost:3001', {
+      const newSocket = io('http://localhost:8001', {
         auth: { token }
       });
       
