@@ -73,7 +73,7 @@ const upload = multer({
 const getDbConnection = async (retries = 3) => {
   for (let i = 0; i < retries; i++) {
     try {
-      const connection = mysql.createConnection(dbConfig);
+      const connection = await mysql.createConnection(dbConfig);
       
       // Test the connection
       await connection.execute('SELECT 1');
@@ -85,12 +85,11 @@ const getDbConnection = async (retries = 3) => {
       if (i === retries - 1) {
         // Last attempt - try to create database if it doesn't exist
         try {
-          const tempConnection = mysql.createConnection({
+          const tempConnection = await mysql.createConnection({
             host: dbConfig.host,
             user: dbConfig.user,
             password: dbConfig.password,
-            connectTimeout: dbConfig.connectTimeout,
-            acquireTimeout: dbConfig.acquireTimeout
+            connectTimeout: dbConfig.connectTimeout
           });
           
           await tempConnection.execute('CREATE DATABASE IF NOT EXISTS oku_transport');
@@ -98,7 +97,7 @@ const getDbConnection = async (retries = 3) => {
           await tempConnection.end();
           
           // Try final connection with database
-          const connection = mysql.createConnection(dbConfig);
+          const connection = await mysql.createConnection(dbConfig);
           
           await connection.execute('SELECT 1');
           console.log('✅ Database connected after creation');
