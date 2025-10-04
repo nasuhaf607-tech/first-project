@@ -47,8 +47,7 @@ const Register = () => {
       const { confirmPassword, ...registerData } = formData;
       
       // Direct API call instead of using AuthContext
-      const API_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api` : 'http://localhost:8001/api';
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
