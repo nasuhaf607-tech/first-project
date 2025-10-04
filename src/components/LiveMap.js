@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import GPSTracking from './GPSTracking';
 
 const LiveMap = () => {
   const { user, socket, API_BASE_URL } = useAuth();
