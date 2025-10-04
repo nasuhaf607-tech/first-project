@@ -67,16 +67,67 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
-// Database connection
-async function getDbConnection() {
-  try {
-    const connection = await mysql.createConnection(dbConfig);
-    return connection;
-  } catch (error) {
-    console.error('Database connection failed:', error);
-    throw error;
+// Database connection function with retry logic
+const getDbConnection = async (retries = 3) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'oku_transport',
+        timezone: 'Z',
+        connectTimeout: 10000,
+        acquireTimeout: 10000
+      });
+      
+      // Test the connection
+      await connection.execute('SELECT 1');
+      console.log(`✅ Database connected successfully (attempt ${i + 1})`);
+      return connection;
+    } catch (error) {
+      console.log(`❌ Database connection attempt ${i + 1} failed:`, error.message);
+      
+      if (i === retries - 1) {
+        // Last attempt - try to create database if it doesn't exist
+        try {
+          const tempConnection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '',
+            connectTimeout: 10000,
+            acquireTimeout: 10000
+          });
+          
+          await tempConnection.execute('CREATE DATABASE IF NOT EXISTS oku_transport');
+          console.log('✅ Database created/verified');
+          await tempConnection.end();
+          
+          // Try final connection with database
+          const connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '',
+            database: 'oku_transport',
+            timezone: 'Z',
+            connectTimeout: 10000,
+            acquireTimeout: 10000
+          });
+          
+          await connection.execute('SELECT 1');
+          console.log('✅ Database connected after creation');
+          return connection;
+        } catch (createError) {
+          console.error('❌ Failed to create database:', createError.message);
+          throw error;
+        }
+      }
+      
+      // Wait before retry
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
   }
-}
+};
 
 // Authentication middleware
 const authenticateToken = (req, res, next) => {
