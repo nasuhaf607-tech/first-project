@@ -28,7 +28,7 @@ app.use('/uploads', express.static('uploads'));
 const dbConfig = {
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'password123',
   database: 'dbuser'
 };
 
