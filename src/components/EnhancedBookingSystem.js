@@ -372,24 +372,72 @@ const EnhancedBookingSystem = () => {
               <h2 className="text-xl font-semibold mb-4">Create New Booking</h2>
               
               <form onSubmit={handleBookingSubmit} className="space-y-6">
-                {/* Driver Selection */}
+                {/* Driver Selection with Vehicle Type Filtering */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Assigned Driver *
+                    Select Assigned Driver & Vehicle *
                   </label>
-                  <select 
-                    value={selectedDriver}
-                    onChange={(e) => setSelectedDriver(e.target.value)}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    required
-                  >
-                    <option value="">Choose a driver</option>
-                    {assignments.filter(a => a.driver_status === 'approved').map(assignment => (
-                      <option key={assignment.driver_id} value={assignment.driver_id}>
-                        {assignment.driver_name} - {assignment.vehicleType} ({assignment.vehicleNumber})
-                      </option>
-                    ))}
-                  </select>
+                  <div className="space-y-3">
+                    {assignments.filter(a => a.driver_status === 'approved').length === 0 ? (
+                      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p className="text-yellow-800">⚠️ No assigned drivers available. Please contact admin to assign a driver.</p>
+                      </div>
+                    ) : (
+                      assignments.filter(a => a.driver_status === 'approved').map(assignment => (
+                        <div 
+                          key={assignment.driver_id}
+                          className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                            selectedDriver === assignment.driver_id.toString()
+                              ? 'border-blue-500 bg-blue-50'
+                              : 'border-gray-200 hover:border-blue-300'
+                          }`}
+                          onClick={() => setSelectedDriver(assignment.driver_id.toString())}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center mb-2">
+                                <input
+                                  type="radio"
+                                  checked={selectedDriver === assignment.driver_id.toString()}
+                                  onChange={() => setSelectedDriver(assignment.driver_id.toString())}
+                                  className="mr-3"
+                                />
+                                <div>
+                                  <h3 className="font-semibold text-gray-900">{assignment.driver_name}</h3>
+                                  <p className="text-sm text-gray-600">📞 {assignment.driver_phone}</p>
+                                </div>
+                              </div>
+                              
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <p><strong>🚐 Vehicle:</strong> {assignment.vehicleType}</p>
+                                  <p><strong>🔢 Number:</strong> {assignment.vehicleNumber}</p>
+                                </div>
+                                <div>
+                                  <p><strong>🌟 Status:</strong> <span className="text-green-600">Active</span></p>
+                                  <p><strong>📱 Available:</strong> <span className="text-blue-600">Online</span></p>
+                                </div>
+                              </div>
+                              
+                              {/* Vehicle Features */}
+                              {assignment.vehicleFeatures && (
+                                <div className="mt-3 pt-2 border-t border-gray-200">
+                                  <p className="text-sm font-medium text-gray-700 mb-1">♿ Accessibility Features:</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {JSON.parse(assignment.vehicleFeatures || '[]').map((feature, idx) => (
+                                      <span key={idx} className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                                        {feature}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
 
                 {/* Booking Type */}
