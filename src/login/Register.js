@@ -45,9 +45,19 @@ const Register = () => {
     
     try {
       const { confirmPassword, ...registerData } = formData;
-      const result = await register(registerData);
       
-      if (result.success) {
+      // Direct API call instead of using AuthContext
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registerData),
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
         setMessage(result.message);
         
         // For drivers, show special message about approval
@@ -61,9 +71,10 @@ const Register = () => {
           }, 2000);
         }
       } else {
-        setError(result.message);
+        setError(result.message || 'Registration failed');
       }
     } catch (err) {
+      console.error('Registration error:', err);
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
