@@ -156,7 +156,14 @@ app.post('/api/login', async (req, res) => {
 // User Registration
 app.post('/api/register', async (req, res) => {
   try {
+    console.log('Registration request received:', req.body);
     const { name, email, phone, password, userType } = req.body;
+    
+    if (!name || !email || !phone || !password || !userType) {
+      console.log('Missing required fields');
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+    
     const connection = await getDbConnection();
     
     // Check if email exists
