@@ -400,7 +400,7 @@ app.get('/api/bookings', authenticateToken, async (req, res) => {
                oku.name as oku_name, oku.phone as oku_phone,
                driver.name as driver_name, driver.phone as driver_phone,
                driver.vehicleType, driver.vehicleNumber, driver.vehicleFeatures
-        FROM bookings b
+        FROM tbbook b
         JOIN tbuser oku ON b.oku_id = oku.id
         JOIN tbuser driver ON b.driver_id = driver.id
         ORDER BY b.start_datetime DESC
