@@ -330,6 +330,43 @@ app.post('/api/assignments', authenticateToken, async (req, res) => {
 
 // ===== BOOKING ROUTES =====
 
+// Get driver schedule (for OKU users to see availability)
+app.get('/api/driver/:driverId/schedule', authenticateToken, async (req, res) => {
+  try {
+    const { driverId } = req.params;
+    const { date } = req.query; // Optional date filter
+    
+    const connection = await getDbConnection();
+    
+    let query = `
+      SELECT b.id, b.start_datetime, b.end_datetime, b.status, b.pickup_location, b.dropoff_location,
+             u.name as oku_name
+      FROM bookings b
+      JOIN tbuser u ON b.oku_id = u.id
+      WHERE b.driver_id = ? AND b.status IN ('pending', 'approved', 'in_progress')
+    `;
+    
+    const params = [driverId];
+    
+    if (date) {
+      query += ' AND DATE(b.start_datetime) = ?';
+      params.push(date);
+    } else {
+      query += ' AND DATE(b.start_datetime) >= CURDATE()';
+    }
+    
+    query += ' ORDER BY b.start_datetime ASC';
+    
+    const [rows] = await connection.execute(query, params);
+    res.json({ schedule: rows });
+    
+    await connection.end();
+  } catch (error) {
+    console.error('Driver schedule error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Get bookings
 app.get('/api/bookings', authenticateToken, async (req, res) => {
   try {
@@ -338,16 +375,19 @@ app.get('/api/bookings', authenticateToken, async (req, res) => {
     
     if (req.user.role === 'Driver') {
       query = `
-        SELECT b.*, u.name as oku_name, u.phone as oku_phone
+        SELECT b.*, u.name as oku_name, u.phone as oku_phone,
+               acc.disability_type, acc.mobility_aid, acc.special_requirements
         FROM bookings b
         JOIN tbuser u ON b.oku_id = u.id
+        LEFT JOIN tbaccessibilities acc ON b.oku_id = acc.user_id
         WHERE b.driver_id = ?
         ORDER BY b.start_datetime DESC
       `;
       params = [req.user.id];
     } else if (req.user.role === 'OKU User') {
       query = `
-        SELECT b.*, u.name as driver_name, u.phone as driver_phone, u.vehicleType, u.vehicleNumber
+        SELECT b.*, u.name as driver_name, u.phone as driver_phone, 
+               u.vehicleType, u.vehicleNumber, u.vehicleFeatures, u.status as driver_status
         FROM bookings b
         JOIN tbuser u ON b.driver_id = u.id
         WHERE b.oku_id = ?
@@ -359,7 +399,7 @@ app.get('/api/bookings', authenticateToken, async (req, res) => {
         SELECT b.*, 
                oku.name as oku_name, oku.phone as oku_phone,
                driver.name as driver_name, driver.phone as driver_phone,
-               driver.vehicleType, driver.vehicleNumber
+               driver.vehicleType, driver.vehicleNumber, driver.vehicleFeatures
         FROM bookings b
         JOIN tbuser oku ON b.oku_id = oku.id
         JOIN tbuser driver ON b.driver_id = driver.id
