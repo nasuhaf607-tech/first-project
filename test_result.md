@@ -253,13 +253,12 @@ metadata:
 test_plan:
   current_focus:
     - "Enhanced Booking System"
-    - "Driver Dashboard"
-    - "User Registration System"
-    - "User Login System"
-    - "Driver Profile Completion"
-  stuck_tasks: []
-  test_all: true
-  test_priority: "high_first"
+    - "Protected Routes"
+  stuck_tasks:
+    - "Enhanced Booking System"
+    - "Protected Routes"
+  test_all: false
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "testing"
