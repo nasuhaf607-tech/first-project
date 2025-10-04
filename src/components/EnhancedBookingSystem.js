@@ -396,10 +396,10 @@ const EnhancedBookingSystem = () => {
                 </ul>
                 <button 
                   onClick={() => setBookingForm({...bookingForm, booking_type: 'monthly'})}
-                  className={`mt-6 px-8 py-3 rounded-lg font-semibold transition-colors ${
+                  className={`mt-6 px-8 py-3 rounded-lg font-bold transition-colors ${
                     bookingForm.booking_type === 'monthly' 
-                      ? 'bg-white text-green-600 shadow-md' 
-                      : 'bg-green-400 text-white hover:bg-green-300'
+                      ? 'bg-white text-green-700 shadow-lg' 
+                      : 'bg-green-700 text-white hover:bg-green-800 border-2 border-white'
                   }`}
                 >
                   Select Monthly
