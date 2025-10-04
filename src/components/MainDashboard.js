@@ -157,7 +157,7 @@ const MainDashboard = () => {
             <h1 className="text-3xl font-bold">
               {getGreeting()}, {user?.name}! 👋
             </h1>
-            <p className="text-blue-100 mt-2">
+            <p className="text-white font-medium mt-2">
               Welcome to your {user?.role} dashboard. Here's what's happening today.
             </p>
           </div>
