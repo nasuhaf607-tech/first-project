@@ -111,7 +111,24 @@ const AdminAssignments = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+      {/* ADMIN HEADER with LOGOUT BUTTON */}
+      <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 mb-8 text-white">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Admin Dashboard 🏛️</h1>
+            <p className="text-purple-100 mt-1">Manage drivers, assignments and system operations</p>
+          </div>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              window.location.href = '/';
+            }}
+            className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 shadow-lg"
+          >
+            🚪 LOGOUT
+          </button>
+        </div>
+      </div>
       
       {message && (
         <div className={`mb-4 p-4 rounded-md ${
