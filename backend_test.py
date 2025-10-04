@@ -121,24 +121,39 @@ class OKUTransportAPITester:
             return self.log_test("Server Health Check", False, f"Expected 401, got {response.status_code if response else 'No response'}")
 
     def test_user_registration(self):
-        """Test user registration functionality"""
+        """Test user registration functionality for all user types"""
         print("\n🔍 Testing User Registration...")
         
         # Test data for different user types
+        timestamp = int(time.time())
         test_users = [
             {
                 "name": "Test OKU User",
-                "email": f"oku_test_{int(time.time())}@example.com",
+                "email": f"oku_test_{timestamp}@example.com",
                 "phone": "0123456789",
                 "password": "password123",
                 "userType": "OKU User"
             },
             {
                 "name": "Test Driver",
-                "email": f"driver_test_{int(time.time())}@example.com", 
+                "email": f"driver_test_{timestamp}@example.com", 
                 "phone": "0123456790",
                 "password": "password123",
                 "userType": "Driver"
+            },
+            {
+                "name": "Test Company Admin",
+                "email": f"admin_test_{timestamp}@example.com",
+                "phone": "0123456791",
+                "password": "password123",
+                "userType": "Company Admin"
+            },
+            {
+                "name": "Test JKM Officer",
+                "email": f"jkm_test_{timestamp}@example.com",
+                "phone": "0123456792",
+                "password": "password123",
+                "userType": "JKM Officer"
             }
         ]
         
@@ -155,6 +170,9 @@ class OKUTransportAPITester:
                     response_data.get('message', 'Registration successful'),
                     response_data
                 )
+                # Store user data for later tests
+                user_data['userId'] = response_data.get('userId')
+                self.test_users.append(user_data)
                 registration_results.append({
                     'user_data': user_data,
                     'response': response_data,
