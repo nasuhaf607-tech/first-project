@@ -324,6 +324,325 @@ class OKUTransportAPITester:
                 f"Expected 401, got {response.status_code if response else 'No response'}"
             )
 
+    def test_driver_profile_apis(self):
+        """Test driver profile completion endpoints"""
+        print("\n🔍 Testing Driver Profile APIs...")
+        
+        if not self.driver_token:
+            return self.log_test(
+                "Driver Profile APIs", 
+                False, 
+                "No driver token available - driver login must pass first"
+            )
+        
+        # Test driver profile status endpoint
+        original_token = self.token
+        self.token = self.driver_token
+        
+        response = self.make_request('GET', 'api/driver/profile/status')
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            status_success = self.log_test(
+                "Driver Profile Status", 
+                True, 
+                f"Profile status retrieved: Complete={response_data.get('isComplete', False)}, Status={response_data.get('status', 'unknown')}",
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'Profile status failed') if response else 'No response'
+            status_success = self.log_test(
+                "Driver Profile Status", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        # Test driver profile update endpoint (without file upload for now)
+        profile_data = {
+            "licenseNumber": "D123456789",
+            "vehicleType": "MPV",
+            "vehicleNumber": "ABC1234",
+            "vehicleFeatures": '["wheelchair_accessible", "air_conditioning"]',
+            "experience": "5 years",
+            "languages": "English, Malay",
+            "emergencyContact": "Emergency Contact",
+            "emergencyPhone": "0123456789",
+            "address": "Test Address"
+        }
+        
+        response = self.make_request('PUT', 'api/driver/profile', profile_data)
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            profile_success = self.log_test(
+                "Driver Profile Update", 
+                True, 
+                response_data.get('message', 'Profile updated successfully'),
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'Profile update failed') if response else 'No response'
+            profile_success = self.log_test(
+                "Driver Profile Update", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        # Restore original token
+        self.token = original_token
+        
+        return status_success and profile_success
+
+    def test_assignment_system(self):
+        """Test assignment system APIs"""
+        print("\n🔍 Testing Assignment System...")
+        
+        if not self.admin_token or not self.token or not self.driver_data:
+            return self.log_test(
+                "Assignment System", 
+                False, 
+                "Missing required tokens/data - admin, OKU user, and driver must be available"
+            )
+        
+        # Test creating assignment (as admin)
+        original_token = self.token
+        self.token = self.admin_token
+        
+        assignment_data = {
+            "oku_id": self.user_data.get('id'),
+            "driver_id": self.driver_data.get('id'),
+            "effective_from": datetime.now().strftime('%Y-%m-%d'),
+            "effective_to": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+            "notes": "Test assignment"
+        }
+        
+        response = self.make_request('POST', 'api/assignments', assignment_data)
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            create_success = self.log_test(
+                "Create Assignment", 
+                True, 
+                response_data.get('message', 'Assignment created successfully'),
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'Assignment creation failed') if response else 'No response'
+            create_success = self.log_test(
+                "Create Assignment", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        # Test getting assignments (as OKU user)
+        self.token = original_token
+        
+        response = self.make_request('GET', 'api/assignments')
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            get_success = self.log_test(
+                "Get Assignments", 
+                True, 
+                f"Retrieved {len(response_data.get('assignments', []))} assignments",
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'Get assignments failed') if response else 'No response'
+            get_success = self.log_test(
+                "Get Assignments", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        return create_success and get_success
+
+    def test_booking_system(self):
+        """Test booking system with conflict detection"""
+        print("\n🔍 Testing Booking System...")
+        
+        if not self.token or not self.driver_data:
+            return self.log_test(
+                "Booking System", 
+                False, 
+                "Missing required tokens/data - OKU user and driver must be available"
+            )
+        
+        # Test creating a booking
+        booking_data = {
+            "driver_id": self.driver_data.get('id'),
+            "booking_type": "daily",
+            "start_datetime": (datetime.now() + timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S'),
+            "end_datetime": (datetime.now() + timedelta(hours=4)).strftime('%Y-%m-%d %H:%M:%S'),
+            "pickup_location": "Test Pickup Location",
+            "pickup_lat": 5.3307,
+            "pickup_lng": 103.1324,
+            "dropoff_location": "Test Dropoff Location",
+            "dropoff_lat": 5.3408,
+            "dropoff_lng": 103.1425,
+            "purpose": "Medical appointment",
+            "special_instructions": "Test booking"
+        }
+        
+        response = self.make_request('POST', 'api/bookings', booking_data)
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            create_success = self.log_test(
+                "Create Booking", 
+                True, 
+                response_data.get('message', 'Booking created successfully'),
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'Booking creation failed') if response else 'No response'
+            create_success = self.log_test(
+                "Create Booking", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        # Test getting bookings
+        response = self.make_request('GET', 'api/bookings')
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            get_success = self.log_test(
+                "Get Bookings", 
+                True, 
+                f"Retrieved {len(response_data.get('bookings', []))} bookings",
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'Get bookings failed') if response else 'No response'
+            get_success = self.log_test(
+                "Get Bookings", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        # Test conflict detection by creating overlapping booking
+        conflicting_booking = booking_data.copy()
+        conflicting_booking["start_datetime"] = (datetime.now() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+        conflicting_booking["end_datetime"] = (datetime.now() + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+        
+        response = self.make_request('POST', 'api/bookings', conflicting_booking)
+        
+        if response and response.status_code == 409:
+            conflict_success = self.log_test(
+                "Booking Conflict Detection", 
+                True, 
+                "Correctly detected booking conflict",
+                response.json()
+            )
+        else:
+            conflict_success = self.log_test(
+                "Booking Conflict Detection", 
+                False, 
+                f"Expected 409 conflict, got {response.status_code if response else 'No response'}"
+            )
+        
+        return create_success and get_success and conflict_success
+
+    def test_driver_schedule(self):
+        """Test driver schedule endpoint"""
+        print("\n🔍 Testing Driver Schedule...")
+        
+        if not self.token or not self.driver_data:
+            return self.log_test(
+                "Driver Schedule", 
+                False, 
+                "Missing required tokens/data - OKU user and driver must be available"
+            )
+        
+        driver_id = self.driver_data.get('id')
+        today = datetime.now().strftime('%Y-%m-%d')
+        
+        # Test getting driver schedule
+        response = self.make_request('GET', f'api/driver/{driver_id}/schedule?date={today}')
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            return self.log_test(
+                "Driver Schedule", 
+                True, 
+                f"Retrieved schedule with {len(response_data.get('schedule', []))} entries",
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'Schedule fetch failed') if response else 'No response'
+            return self.log_test(
+                "Driver Schedule", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+
+    def test_gps_tracking(self):
+        """Test GPS tracking endpoint"""
+        print("\n🔍 Testing GPS Tracking...")
+        
+        if not self.driver_token:
+            return self.log_test(
+                "GPS Tracking", 
+                False, 
+                "No driver token available - driver login must pass first"
+            )
+        
+        # Test GPS update (as driver)
+        original_token = self.token
+        self.token = self.driver_token
+        
+        gps_data = {
+            "lat": 5.3307,
+            "lng": 103.1324,
+            "speed": 45.5,
+            "heading": 180.0,
+            "accuracy": 5.0,
+            "booking_id": None
+        }
+        
+        response = self.make_request('POST', 'api/gps/update', gps_data)
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            update_success = self.log_test(
+                "GPS Update", 
+                True, 
+                response_data.get('message', 'GPS location updated successfully'),
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'GPS update failed') if response else 'No response'
+            update_success = self.log_test(
+                "GPS Update", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        # Test getting latest GPS locations
+        response = self.make_request('GET', 'api/gps/latest')
+        
+        if response and response.status_code == 200:
+            response_data = response.json()
+            get_success = self.log_test(
+                "Get GPS Locations", 
+                True, 
+                f"Retrieved {len(response_data.get('locations', []))} GPS locations",
+                response_data
+            )
+        else:
+            error_msg = response.json().get('message', 'GPS locations failed') if response else 'No response'
+            get_success = self.log_test(
+                "Get GPS Locations", 
+                False, 
+                f"Status: {response.status_code if response else 'No response'}, Error: {error_msg}"
+            )
+        
+        # Restore original token
+        self.token = original_token
+        
+        return update_success and get_success
+
     def test_cors_headers(self):
         """Test CORS configuration"""
         print("\n🔍 Testing CORS Configuration...")
