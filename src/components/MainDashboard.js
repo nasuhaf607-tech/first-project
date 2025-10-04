@@ -150,14 +150,28 @@ const MainDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          {getGreeting()}, {user?.name}! 👋
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Welcome to your {user?.role} dashboard. Here's what's happening today.
-        </p>
+      {/* Welcome Header with LOGOUT BUTTON */}
+      <div className="mb-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">
+              {getGreeting()}, {user?.name}! 👋
+            </h1>
+            <p className="text-blue-100 mt-2">
+              Welcome to your {user?.role} dashboard. Here's what's happening today.
+            </p>
+          </div>
+          {/* PROMINENT LOGOUT BUTTON IN DASHBOARD */}
+          <button
+            onClick={() => {
+              localStorage.clear();
+              window.location.href = '/';
+            }}
+            className="bg-red-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-700 shadow-xl transform hover:scale-105 transition-all"
+          >
+            🚪 LOGOUT
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}
