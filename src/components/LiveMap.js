@@ -212,7 +212,7 @@ const LiveMap = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Live GPS Tracking 🗺️</h1>
-            <p className="text-indigo-100 mt-1">Real-time driver locations and route monitoring</p>
+            <p className="text-white font-medium mt-1">Real-time driver locations and route monitoring</p>
           </div>
           <button
             onClick={() => {
