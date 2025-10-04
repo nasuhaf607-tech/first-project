@@ -30,6 +30,9 @@ function App() {
           <Route path="/authtest" element={<TestAuth />} />
           <Route path="/simplelogin" element={<SimpleLogin />} />
           <Route path="/simpledash" element={<SimpleDashboard />} />
+          <Route path="/driver-dashboard" element={<DriverDashboard />} />
+          <Route path="/driver-profile" element={<DriverProfileComplete />} />
+          <Route path="/enhanced-bookings" element={<EnhancedBookingSystem />} />
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={
