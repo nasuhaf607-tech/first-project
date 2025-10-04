@@ -206,8 +206,26 @@ const LiveMap = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
+      {/* LIVE MAP HEADER with LOGOUT BUTTON */}
+      <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg p-6 mb-8 text-white">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Live GPS Tracking 🗺️</h1>
+            <p className="text-indigo-100 mt-1">Real-time driver locations and route monitoring</p>
+          </div>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              window.location.href = '/';
+            }}
+            className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 shadow-lg"
+          >
+            🚪 LOGOUT
+          </button>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Live GPS Tracking</h1>
         
         {user?.role === 'Driver' && (
           <div className="flex gap-3">
