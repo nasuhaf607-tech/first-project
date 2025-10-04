@@ -657,7 +657,7 @@ io.on('connection', (socket) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8001;
 server.listen(PORT, () => {
   console.log(`OKU Transport Server running on port ${PORT}`);
   console.log(`Socket.IO enabled for real-time features`);
