@@ -388,7 +388,7 @@ app.get('/api/bookings', authenticateToken, async (req, res) => {
       query = `
         SELECT b.*, u.name as driver_name, u.phone as driver_phone, 
                u.vehicleType, u.vehicleNumber, u.vehicleFeatures, u.status as driver_status
-        FROM bookings b
+        FROM tbbook b
         JOIN tbuser u ON b.driver_id = u.id
         WHERE b.oku_id = ?
         ORDER BY b.start_datetime DESC
