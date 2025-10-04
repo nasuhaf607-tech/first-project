@@ -341,10 +341,14 @@ class OKUTransportAPITester:
                 "Correctly rejected request without token"
             )
         else:
+            try:
+                error_msg = response.json().get('message', 'Unknown error') if response else 'No response'
+            except:
+                error_msg = 'Invalid response format'
             return self.log_test(
                 "Protected Route Without Token", 
                 False, 
-                f"Expected 401, got {response.status_code if response else 'No response'}"
+                f"Expected 401, got {response.status_code if response else 'No response'}: {error_msg}"
             )
 
     def test_driver_profile_apis(self):
