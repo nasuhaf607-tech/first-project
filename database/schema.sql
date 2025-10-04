@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS tbuser (
   licenseNumber VARCHAR(50),
   vehicleType VARCHAR(50),
   vehicleNumber VARCHAR(20),
+  vehicleFeatures JSON DEFAULT NULL,
   address TEXT,
   emergencyContact VARCHAR(100),
   emergencyPhone VARCHAR(20),
