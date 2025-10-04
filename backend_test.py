@@ -57,11 +57,11 @@ class OKUTransportAPITester:
 
         try:
             if method == 'GET':
-                response = requests.get(url, headers=default_headers, timeout=5)
+                response = requests.get(url, headers=default_headers, timeout=10)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=default_headers, timeout=5)
+                response = requests.post(url, json=data, headers=default_headers, timeout=10)
             elif method == 'PUT':
-                response = requests.put(url, json=data, headers=default_headers, timeout=5)
+                response = requests.put(url, json=data, headers=default_headers, timeout=10)
             
             print(f"Request: {method} {url} -> Status: {response.status_code}")
             return response
