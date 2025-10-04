@@ -25,6 +25,7 @@ const EnhancedBookingSystem = () => {
   const [message, setMessage] = useState('');
   const [showPickupSuggestions, setShowPickupSuggestions] = useState(false);
   const [showDropoffSuggestions, setShowDropoffSuggestions] = useState(false);
+  const [showFullHistory, setShowFullHistory] = useState(false);
 
   // Malaysia locations database (like Grab/Maxim)
   const malaysiaLocations = [
