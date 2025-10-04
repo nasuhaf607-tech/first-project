@@ -684,6 +684,15 @@ app.get('/register', (req, res) => {
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+app.get('/bookings', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/map', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // Start server
 const PORT = process.env.PORT || 8001;
