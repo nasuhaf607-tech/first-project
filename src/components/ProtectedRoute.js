@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children, requireRole = null }) => {
     );
   }
 
-  return <Layout>{children}</Layout>;
+  return children;
 };
 
 export default ProtectedRoute;
