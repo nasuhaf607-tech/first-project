@@ -377,7 +377,7 @@ app.get('/api/bookings', authenticateToken, async (req, res) => {
       query = `
         SELECT b.*, u.name as oku_name, u.phone as oku_phone,
                acc.disability_type, acc.mobility_aid, acc.special_requirements
-        FROM bookings b
+        FROM tbbook b
         JOIN tbuser u ON b.oku_id = u.id
         LEFT JOIN tbaccessibilities acc ON b.oku_id = acc.user_id
         WHERE b.driver_id = ?
