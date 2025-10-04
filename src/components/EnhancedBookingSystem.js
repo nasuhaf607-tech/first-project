@@ -372,10 +372,10 @@ const EnhancedBookingSystem = () => {
                 </ul>
                 <button 
                   onClick={() => setBookingForm({...bookingForm, booking_type: 'daily'})}
-                  className={`mt-6 px-8 py-3 rounded-lg font-semibold transition-colors ${
+                  className={`mt-6 px-8 py-3 rounded-lg font-bold transition-colors ${
                     bookingForm.booking_type === 'daily' 
-                      ? 'bg-white text-blue-600 shadow-md' 
-                      : 'bg-blue-400 text-white hover:bg-blue-300'
+                      ? 'bg-white text-blue-700 shadow-lg' 
+                      : 'bg-blue-700 text-white hover:bg-blue-800 border-2 border-white'
                   }`}
                 >
                   Select One-Time
