@@ -6,9 +6,8 @@ import './output.css';
 // make sure the filename matches case
 
 const OKUTransport = () => {
+  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   return (
     <>
