@@ -712,24 +712,39 @@ class OKUTransportAPITester:
 
     def run_all_tests(self):
         """Run all backend tests"""
-        print("=" * 60)
-        print("🚐 OKU TRANSPORT SYSTEM - BACKEND API TESTING")
-        print("=" * 60)
+        print("=" * 80)
+        print("🚐 OKU TRANSPORT SYSTEM - COMPREHENSIVE BACKEND API TESTING")
+        print("=" * 80)
         
         # Run tests in sequence
+        print("\n🔧 INFRASTRUCTURE TESTS")
+        self.test_database_connection()
         self.test_server_health()
+        self.test_cors_headers()
+        
+        print("\n👥 AUTHENTICATION TESTS")
         registration_results = self.test_user_registration()
         self.test_invalid_login()
         self.test_user_login()
         self.test_protected_profile_route()
         self.test_protected_route_without_token()
         self.test_jwt_token_validation()
-        self.test_cors_headers()
+        
+        print("\n🚗 DRIVER MANAGEMENT TESTS")
+        self.test_driver_profile_apis()
+        
+        print("\n📋 ASSIGNMENT & BOOKING TESTS")
+        self.test_assignment_system()
+        self.test_booking_system()
+        self.test_driver_schedule()
+        
+        print("\n📍 GPS TRACKING TESTS")
+        self.test_gps_tracking()
         
         # Print summary
-        print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
-        print("=" * 60)
+        print("\n" + "=" * 80)
+        print("📊 COMPREHENSIVE TEST SUMMARY")
+        print("=" * 80)
         print(f"Total Tests: {self.tests_run}")
         print(f"Passed: {self.tests_passed}")
         print(f"Failed: {self.tests_run - self.tests_passed}")
@@ -740,13 +755,21 @@ class OKUTransportAPITester:
         for result in self.test_results:
             print(f"{result['status']} {result['test']}: {result['message']}")
         
+        # Print critical issues
+        failed_tests = [r for r in self.test_results if "❌" in r['status']]
+        if failed_tests:
+            print("\n🚨 CRITICAL ISSUES FOUND:")
+            for failed in failed_tests:
+                print(f"   • {failed['test']}: {failed['message']}")
+        
         return {
             'total_tests': self.tests_run,
             'passed_tests': self.tests_passed,
             'failed_tests': self.tests_run - self.tests_passed,
             'success_rate': (self.tests_passed/self.tests_run)*100,
             'results': self.test_results,
-            'registration_results': registration_results if 'registration_results' in locals() else []
+            'registration_results': registration_results if 'registration_results' in locals() else [],
+            'critical_issues': failed_tests
         }
 
 def main():
