@@ -363,8 +363,8 @@ const EnhancedBookingSystem = () => {
               <div className="text-center">
                 <div className="text-5xl mb-4">🚐</div>
                 <h3 className="text-2xl font-bold mb-2">One-Time Booking</h3>
-                <p className="text-blue-100 mb-4">Book a single ride for specific dates and times</p>
-                <ul className="text-sm text-blue-100 space-y-1 text-left max-w-xs mx-auto">
+                <p className="text-white mb-4 font-medium">Book a single ride for specific dates and times</p>
+                <ul className="text-sm text-white space-y-1 text-left max-w-xs mx-auto">
                   <li>• Medical appointments</li>
                   <li>• Shopping trips</li>
                   <li>• Social visits</li>
