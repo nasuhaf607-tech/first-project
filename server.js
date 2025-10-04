@@ -702,6 +702,9 @@ app.get('/test', (req, res) => {
 app.get('/simplelogin', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+app.get('/simpledash', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // Start server
 const PORT = process.env.PORT || 8001;
