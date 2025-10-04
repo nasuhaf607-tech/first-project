@@ -36,8 +36,11 @@ app.use('/uploads', express.static('uploads'));
 const dbConfig = {
   host: 'localhost',
   user: 'root',
-  password: 'password123',
-  database: 'dbuser'
+  password: '',
+  database: 'oku_transport',
+  timezone: 'Z',
+  connectTimeout: 10000,
+  acquireTimeout: 10000
 };
 
 // JWT Secret (in production, use environment variable)
