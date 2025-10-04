@@ -4,6 +4,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import OKUTransport from "./OKUTransport";
 import Login from "./login/login";
 import Register from "./login/Register";
+import TestRegistration from "./TestRegistration";
 import MainDashboard from "./components/MainDashboard";
 import BookingSystem from "./components/BookingSystem";
 import LiveMap from "./components/LiveMap";
