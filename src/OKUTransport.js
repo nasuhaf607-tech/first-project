@@ -55,18 +55,29 @@ const OKUTransport = () => {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg py-4 px-6 animate-fadeIn">
-          <button
-            onClick={() => setIsLoginOpen(true)}
-            className="block w-full text-left py-3 px-4 text-blue-800 hover:text-blue-600 font-medium rounded-lg transition-all duration-300 hover:bg-blue-50 hover:pl-6"
-          >
-            Login
-          </button>
-          <a
-            onClick={() => setIsRegisterOpen(true)}
-            className="block py-3 px-4 text-blue-800 hover:text-blue-600 font-medium rounded-lg transition-all duration-300 hover:bg-blue-50 hover:pl-6 mt-2"
-          >
-            Register
-          </a>
+          {user ? (
+            <Link
+              to="/dashboard"
+              className="block w-full text-left py-3 px-4 bg-blue-600 text-white font-medium rounded-lg transition-all duration-300 hover:bg-blue-700"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="block w-full text-left py-3 px-4 text-blue-800 hover:text-blue-600 font-medium rounded-lg transition-all duration-300 hover:bg-blue-50 hover:pl-6"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="block py-3 px-4 text-blue-800 hover:text-blue-600 font-medium rounded-lg transition-all duration-300 hover:bg-blue-50 hover:pl-6 mt-2"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
       )}
 
