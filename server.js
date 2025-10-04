@@ -525,7 +525,7 @@ app.put('/api/bookings/:id/status', authenticateToken, async (req, res) => {
     
     // Get booking details for real-time notification
     const [booking] = await connection.execute(
-      'SELECT oku_id, driver_id FROM bookings WHERE id = ?',
+      'SELECT oku_id, driver_id FROM tbbook WHERE id = ?',
       [bookingId]
     );
     
