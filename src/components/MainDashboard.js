@@ -102,9 +102,9 @@ const MainDashboard = () => {
     
     if (user?.role === 'Driver') {
       return [
-        { title: 'Total Requests', value: stats.totalBookings, icon: '📅', color: 'bg-blue-500', link: '/bookings' },
-        { title: 'Pending Approval', value: stats.pendingBookings, icon: '⏳', color: 'bg-yellow-500', link: '/bookings' },
-        { title: 'Completed Trips', value: stats.completedBookings, icon: '✅', color: 'bg-green-500', link: '/bookings' },
+        { title: 'Total Requests', value: stats.totalBookings, icon: '📅', color: 'bg-blue-500', link: '/driver-dashboard' },
+        { title: 'Pending Approval', value: stats.pendingBookings, icon: '⏳', color: 'bg-yellow-500', link: '/driver-dashboard' },
+        { title: 'Completed Trips', value: stats.completedBookings, icon: '✅', color: 'bg-green-500', link: '/driver-dashboard' },
         { title: 'Share Location', value: 'GPS Map', icon: '📍', color: 'bg-red-500', link: '/map' }
       ];
     }
